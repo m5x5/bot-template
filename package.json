@@ -1,0 +1,52 @@
+{
+  "name": "thunder",
+  "version": "1.0.0",
+  "description": "This is an alrounder bot created to provide discord users the best possible experience",
+  "main": "./build/shard.js",
+  "scripts": {
+    "test": "ava-ts",
+    "start": "node ./build/shard.js",
+    "watch": "nodemon ./build/shard.js",
+    "build": "tsc -b src",
+    "pretest": "tsc -b src",
+    "prestart": "tsc -b src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Michael55555/thunder.git"
+  },
+  "keywords": [
+    "discord-bot"
+  ],
+  "author": "Michael55555",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/Michael55555/thunder/issues"
+  },
+  "homepage": "https://github.com/Michael55555/thunder#readme",
+  "dependencies": {
+    "debug": "^4.1.1",
+    "discord.js": "^12.2.0",
+    "dotenv": "^8.2.0",
+    "install": "^0.13.0",
+    "memejs": "^1.2.3",
+    "mongoose": "^5.9.10",
+    "node-opus": "^0.3.3",
+    "parse-duration": "^0.3.3",
+    "path": "^0.12.7",
+    "yt-search": "^1.1.2",
+    "ytdl-core-discord": "^1.2.0"
+  },
+  "types": "./typings",
+  "devDependencies": {
+    "@types/mongoose": "^5.7.14",
+    "@types/node": "^13.13.4",
+    "@types/ws": "^7.2.4",
+    "@types/yt-search": "^1.1.0",
+    "ava": "^3.8.1",
+    "ava-ts": "^0.25.2",
+    "mongodb-memory-server": "^6.5.2",
+    "ts-node": "^8.10.1",
+    "typescript": "^3.8.3"
+  }
+}

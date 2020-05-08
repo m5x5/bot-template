@@ -1,0 +1,12 @@
+{
+  "extends": "tslint:recommended",
+  "rules": {
+    "no-floating-promises": true,
+    "trailing-comma": true,
+    "member-access": false,
+    "no-var-requires": false,
+    "variable-name": false,
+    "curly": false,
+    "quotemark": false
+  }
+}
