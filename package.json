@@ -40,7 +40,7 @@
   "types": "./typings",
   "devDependencies": {
     "@types/mongoose": "^5.7.14",
-    "@types/node": "^13.13.4",
+    "@types/node": "^13.13.5",
     "@types/ws": "^7.2.4",
     "@types/yt-search": "^1.1.0",
     "ava": "^3.8.1",
