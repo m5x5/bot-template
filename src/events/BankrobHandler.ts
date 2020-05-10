@@ -74,7 +74,9 @@ export default class BankrobHandler extends EventHandler<IBankrobEvents> {
       new Wallet(id).forceGet('money'),
     ]);
     if (options?.newBankrob && this.currentBankrobs.get(guild?.id as string)) {
-      throw new Error('There is an ongoing bankrob in your guild already');
+      throw new Error(
+        'There is an active bankrob already, write ``!heist`` to join'
+      );
     } else if (!(money >= 2000)) {
       throw new Error("You don't have enough money");
     }
@@ -82,21 +84,22 @@ export default class BankrobHandler extends EventHandler<IBankrobEvents> {
 
     if (lastBankrob > Date.now() - TWELVE_HOURS_IN_MS) {
       throw new Error(
-        'You have to wait for' +
-          getRelevantTimeFromMs(Date.now() - TWELVE_HOURS_IN_MS)
+        'You have to wait for ' +
+          getRelevantTimeFromMs(Date.now() - TWELVE_HOURS_IN_MS) +
+          ' to start a new bankrob'
       );
     }
   }
 
   private async checkJoinRequirements(message: Message) {
     if (!message.guild) {
-      throw new Error('This is a guild only command');
+      throw new Error('Please use this command in a guild');
     }
 
     const bankrob = this.currentBankrobs.get(message.guild.id);
 
     if (!bankrob) {
-      throw new Error('There are no active bankrobs at the moment :(');
+      throw new Error('Create a new bankrob using ``!bankrob``');
     } else if (bankrob.robberIds.includes(message.author.id)) {
       throw new Error('You are already participating in the active bankrob.');
     }

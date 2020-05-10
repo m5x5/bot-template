@@ -39,7 +39,7 @@ export default class MusicHandler extends EventHandler<IMusicEvents> {
     this.registerEvent('stop', this.stop.bind(this));
   }
 
-  async play({ member, guild }: GuildMessage, songName?: string) {
+  async play({ member, guild, channel }: GuildMessage, songName?: string) {
     if (!member?.voice.channel)
       throw new Error('You have to be in a voice channel to use this command');
     const voiceChannel = member?.voice.channel;
@@ -61,7 +61,13 @@ export default class MusicHandler extends EventHandler<IMusicEvents> {
     if (musicData.currentSong) return musicData.playlist.push(songInfo);
 
     musicData.currentSong = songInfo;
-    return this.playNewSong(songInfo.url, musicData);
+    await this.playNewSong(songInfo.url, musicData);
+
+    const embed = new MessageEmbed().setDescription(
+      'Playing ' + songInfo.title
+    );
+
+    await channel.send(embed);
   }
 
   async getSongInfo(songName: string) {
