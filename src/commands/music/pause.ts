@@ -1,11 +1,11 @@
-import { Message } from "discord.js";
-import { Command } from "../../core/Command";
+import { Message } from 'discord.js';
+import { Command } from '../../core/Command';
 
 export default new Command({
-  aliases: ["pause", "pausemusic"],
+  aliases: ['pause', 'pausemusic'],
   guildOnly: true,
-  name: "Pause Music Command",
+  name: 'Pause Music Command',
   command(message: Message) {
-    message.client.emit<any>("MusicHandler:pause", message);
+    message.client.emit<any>('MusicHandler:pause', message);
   },
 });

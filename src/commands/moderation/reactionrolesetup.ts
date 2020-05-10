@@ -1,10 +1,10 @@
-import { Command } from "../../core/Command";
+import { Command } from '../../core/Command';
 
 export default new Command({
-  aliases: ["reactionrolesetup", "setupreactionroles"],
+  aliases: ['reactionrolesetup', 'setupreactionroles'],
   guildOnly: true,
-  name: "Reaction Role Setup Command",
+  name: 'Reaction Role Setup Command',
   async command(message) {
-    message.client.emit<any>("ReactionRole:setup", message);
+    message.client.emit<any>('ReactionRole:setup', message);
   },
 });

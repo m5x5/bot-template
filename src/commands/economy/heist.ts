@@ -1,9 +1,9 @@
-import { Command } from "../../core/Command";
+import { Command } from '../../core/Command';
 
 export default new Command({
-  aliases: ["heist", "join", "joinbankrob"],
-  name: "Heist Command",
+  aliases: ['heist', 'join', 'joinbankrob'],
+  name: 'Heist Command',
   command(message) {
-    message.client.emit<any>("heist", message);
+    message.client.emit<any>('heist', message);
   },
 });

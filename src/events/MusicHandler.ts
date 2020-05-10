@@ -1,9 +1,9 @@
-import { MessageEmbed, VoiceChannel, VoiceConnection } from "discord.js";
-import search from "yt-search";
-import ytdl from "ytdl-core-discord";
-import { GuildMessage } from "../../typings";
-import Bot from "../core/Bot";
-import EventHandler, { IEvents } from "../core/EventHandler";
+import { MessageEmbed, VoiceChannel, VoiceConnection } from 'discord.js';
+import search from 'yt-search';
+import ytdl from 'ytdl-core-discord';
+import { GuildMessage } from '../../typings';
+import Bot from '../core/Bot';
+import EventHandler, { IEvents } from '../core/EventHandler';
 
 const shuffleArray = (array: any[]) => {
   for (let i = array.length - 1; i > 0; i--) {
@@ -28,20 +28,20 @@ export default class MusicHandler extends EventHandler<IMusicEvents> {
   guildsMusicData: Map<string, IGuildData> = new Map();
 
   constructor(client: Bot) {
-    super(client, "MusicHandler");
+    super(client, 'MusicHandler');
 
-    this.registerEvent("pause", this.pause.bind(this));
-    this.registerEvent("play", this.play.bind(this));
-    this.registerEvent("queue", this.queue.bind(this));
-    this.registerEvent("repeat", this.repeat.bind(this));
-    this.registerEvent("shuffle", this.shuffle.bind(this));
-    this.registerEvent("skip", this.skip.bind(this));
-    this.registerEvent("stop", this.stop.bind(this));
+    this.registerEvent('pause', this.pause.bind(this));
+    this.registerEvent('play', this.play.bind(this));
+    this.registerEvent('queue', this.queue.bind(this));
+    this.registerEvent('repeat', this.repeat.bind(this));
+    this.registerEvent('shuffle', this.shuffle.bind(this));
+    this.registerEvent('skip', this.skip.bind(this));
+    this.registerEvent('stop', this.stop.bind(this));
   }
 
   async play({ member, guild }: GuildMessage, songName?: string) {
     if (!member?.voice.channel)
-      throw new Error("You have to be in a voice channel to use this command");
+      throw new Error('You have to be in a voice channel to use this command');
     const voiceChannel = member?.voice.channel;
     let musicData = this.guildsMusicData.get(guild.id);
     if (!musicData) {
@@ -53,7 +53,7 @@ export default class MusicHandler extends EventHandler<IMusicEvents> {
       // Resume if paused
       return musicData.connection.dispatcher.resume();
     }
-    if (!songName) throw new Error("Please enter the song you want to play");
+    if (!songName) throw new Error('Please enter the song you want to play');
 
     const songInfo = await this.getSongInfo(songName);
 
@@ -70,21 +70,21 @@ export default class MusicHandler extends EventHandler<IMusicEvents> {
 
   pause({ guild }: GuildMessage) {
     const musicData = this.guildsMusicData.get(guild.id);
-    if (!musicData) throw new Error("There is nothing to pause");
+    if (!musicData) throw new Error('There is nothing to pause');
     musicData.connection.dispatcher.pause(true);
   }
 
   repeat({ guild }: GuildMessage) {
     const musicData = this.guildsMusicData.get(guild.id);
     if (!musicData?.currentSong?.url)
-      throw new Error("There is nothing to repeat");
+      throw new Error('There is nothing to repeat');
     return this.playNewSong(musicData.currentSong.url as string, musicData);
   }
 
   stop({ guild }: GuildMessage) {
     const musicData = this.guildsMusicData.get(guild.id);
     if (!musicData?.connection.dispatcher)
-      throw new Error("There is nothing playing right now");
+      throw new Error('There is nothing playing right now');
     musicData.connection.dispatcher.destroy();
   }
 
@@ -92,8 +92,8 @@ export default class MusicHandler extends EventHandler<IMusicEvents> {
     const musicData = this.guildsMusicData.get(guild.id);
     const nextSong = musicData?.playlist.shift();
 
-    if (!musicData) throw new Error("There is no music playing right now");
-    if (!nextSong) throw new Error("This is the last song in the queue");
+    if (!musicData) throw new Error('There is no music playing right now');
+    if (!nextSong) throw new Error('This is the last song in the queue');
 
     musicData.currentSong = nextSong;
     return this.playNewSong(musicData.currentSong.url, musicData);
@@ -102,11 +102,11 @@ export default class MusicHandler extends EventHandler<IMusicEvents> {
   shuffle({ guild, channel }: GuildMessage) {
     const musicData = this.guildsMusicData.get(guild.id);
     if (!musicData?.playlist[0])
-      throw new Error("There is nothing in the queue to shuffle");
+      throw new Error('There is nothing in the queue to shuffle');
 
     musicData.playlist = shuffleArray(musicData.playlist);
 
-    return channel.send("Shuffled successfully");
+    return channel.send('Shuffled successfully');
   }
 
   queue({ guild, channel }: GuildMessage) {
@@ -115,9 +115,9 @@ export default class MusicHandler extends EventHandler<IMusicEvents> {
     const songTitles = musicData?.playlist.map((song) => song.title);
 
     if (songTitles && songTitles[0]) {
-      embed.setDescription(songTitles.join("\n"));
+      embed.setDescription(songTitles.join('\n'));
     } else {
-      embed.setDescription("*There are no songs in queue*");
+      embed.setDescription('*There are no songs in queue*');
     }
     return channel.send(embed);
   }
@@ -134,8 +134,8 @@ export default class MusicHandler extends EventHandler<IMusicEvents> {
 
   private async playNewSong(url: string, { connection }: IGuildData) {
     connection.play(
-      await ytdl(url, { filter: "audioonly", quality: "lowest" }),
-      { type: "opus" }
+      await ytdl(url, { filter: 'audioonly', quality: 'lowest' }),
+      { type: 'opus' }
     );
   }
 }
