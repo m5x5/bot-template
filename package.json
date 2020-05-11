@@ -30,7 +30,7 @@
     "dotenv": "^8.2.0",
     "install": "^0.13.0",
     "memejs": "^1.2.3",
-    "mongoose": "^5.9.10",
+    "mongoose": "^5.9.13",
     "node-opus": "^0.3.3",
     "parse-duration": "^0.3.3",
     "path": "^0.12.7",
