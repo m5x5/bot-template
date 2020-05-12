@@ -45,7 +45,7 @@
     "@types/yt-search": "^1.1.0",
     "ava": "^3.8.1",
     "ava-ts": "^0.25.2",
-    "mongodb-memory-server": "^6.5.2",
+    "mongodb-memory-server": "^6.6.0",
     "ts-node": "^8.10.1",
     "typescript": "^3.8.3"
   }
