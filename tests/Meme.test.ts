@@ -8,7 +8,10 @@ const db = new MongoMemoryServer();
 require('dotenv').config();
 
 const FUN_CHANNEL_ID = '708306011315765299';
-const thunder = new Bot();
+const thunder = new Bot({
+  fetchAllMembers: false,
+  partials: ['GUILD_MEMBER', 'REACTION', 'USER'],
+});
 const tester = new TestClient(FUN_CHANNEL_ID);
 
 test.before(async () => {
@@ -28,16 +31,10 @@ test.before(async () => {
 
 //#region !meme
 test('should return a meme', async (t) => {
-  const response = await tester.getResponseTo('!meme');
-
-  t.truthy(response?.embeds[0].footer);
-  t.truthy(response?.embeds[0].image);
+  t.truthy(await tester.getResponseTo('!meme'));
 });
 
 test('should return a specific meme', async (t) => {
-  const response = await tester.getResponseTo('!meme catmeme');
-
-  t.truthy(response?.embeds[0].footer);
-  t.truthy(response?.embeds[0].image);
+  t.truthy(await tester.getResponseTo('!meme catmeme'));
 });
 //#endregion !meme

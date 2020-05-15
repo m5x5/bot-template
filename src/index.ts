@@ -17,6 +17,7 @@ const indexDebugger = require('debug')('thunder:index');
 connect(dbURI || 'mongodb://localhost/thunder-bot', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  useCreateIndex: true,
 })
   .then(() => indexDebugger('Connected to db'))
   .catch((err: Error) => indexDebugger({ err }));

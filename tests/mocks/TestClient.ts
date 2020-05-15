@@ -16,7 +16,7 @@ export default class TestClient extends Client {
 
     const collector = await testChannel.awaitMessages(
       (message) => message.author.id === '705046929612210267',
-      Object.assign({ max: 1, time: 15000 }, options)
+      Object.assign({ max: 1 }, options)
     );
     return collector.first();
   }
@@ -46,7 +46,7 @@ export default class TestClient extends Client {
     );
   }
 
-  async getResponseTo(command: string): Promise<Message | undefined> {
+  async _getResponseTo(command: string): Promise<Message | undefined> {
     const [, response] = await Promise.all([
       this.sendMessage(command),
       this.waitForMessage(),
@@ -56,5 +56,15 @@ export default class TestClient extends Client {
 
   getWallet(): Promise<IWallet | null> {
     return new Wallet(this.user?.id || '').get();
+  }
+
+  async getResponseTo(command: string): Promise<Message> {
+    await this.sendMessage(command);
+    return new Promise((resolve) => {
+      this.on('message', (msg) => {
+        this.removeListener('message', (msg) => {});
+        resolve(msg);
+      });
+    });
   }
 }
