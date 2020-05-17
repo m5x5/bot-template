@@ -11,6 +11,6 @@ export default class GuildController extends Controller<IGuildDoc, IGuild> {
   }
 
   constructor(public guildId: string) {
-    super(GuildModel, { disabledCommands: [], prefix: '!', guildId });
+    super(GuildModel, { enabledCommands: [], prefix: '!', guildId });
   }
 }
