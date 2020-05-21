@@ -10,16 +10,22 @@ const {
   TEST_DATABASE,
   DATABASE,
 } = process.env;
-const token = NODE_ENV === "test" ? THUNDER_TEST_TOKEN || "" : TOKEN || "";
+const token = NODE_ENV === "test" ? THUNDER_TEST_TOKEN: TOKEN;
 const dbURI = NODE_ENV === "test" ? TEST_DATABASE : DATABASE;
-const indexDebugger = require("debug")("thunder:index");
+const debug = require("debug")("thunder:index");
 
-connect(dbURI || "mongodb://localhost/thunder-bot", {
+if(!token) {
+  throw new Error("Please provide a token")
+} else if (!dbURI) {
+  throw new Error("Please provide a connection string")
+}
+
+connect(dbURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-  .then(() => indexDebugger("Connected to db"))
-  .catch((err: Error) => indexDebugger({ err }));
+  .then(() => debug("Connected to db"))
+  .catch((err: Error) => debug({ err }));
 
 const bot = new Bot({});
 
