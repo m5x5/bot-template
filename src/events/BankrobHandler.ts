@@ -1,12 +1,12 @@
-import { Message, MessageEmbed } from "discord.js";
-import { GuildMessage } from "../../typings";
-import BankAccount from "../controllers/bankaccount";
-import UserController from "../controllers/user";
-import Wallet from "../controllers/wallet";
-import Bot from "../core/Bot";
-import EventHandler, { IEvents } from "../core/EventHandler";
-import { getRelevantTimeFromMs, sendReply } from "../utils";
-import { TWELVE_HOURS_IN_MS } from "../utils/constants";
+import { Message, MessageEmbed } from 'discord.js';
+import { GuildMessage } from '../../typings';
+import BankAccount from '../controllers/bankaccount';
+import UserController from '../controllers/user';
+import Wallet from '../controllers/wallet';
+import Bot from '../core/Bot';
+import EventHandler, { IEvents } from '../core/EventHandler';
+import { getRelevantTimeFromMs, sendReply } from '../utils';
+import { TWELVE_HOURS_IN_MS } from '../utils/constants';
 
 interface IBankrob {
   channelId: string;
@@ -22,18 +22,18 @@ export default class BankrobHandler extends EventHandler<IBankrobEvents> {
   currentBankrobs: Map<string, IBankrob> = new Map();
 
   constructor(public client: Bot) {
-    super(client, "BankrobHandler");
+    super(client, 'BankrobHandler');
 
-    this.registerEvent("heist", this.heist.bind(this));
-    this.registerEvent("start", this.start.bind(this));
+    this.registerEvent('heist', this.heist.bind(this));
+    this.registerEvent('start', this.start.bind(this));
   }
 
   async start(message: Message) {
     const embed = new MessageEmbed()
-      .setTitle("Bankrob started :moneybag:")
-      .setDescription("Enter the bankrob with the ``!heist`` command")
-      .setColor("PURPLE")
-      .setFooter(message.author.username, message.author.avatarURL() || "");
+      .setTitle('Bankrob started :moneybag:')
+      .setDescription('Enter the bankrob with the ``!heist`` command')
+      .setColor('PURPLE')
+      .setFooter(message.author.username, message.author.avatarURL() || '');
 
     try {
       await this.checkRequirements(message, { newBankrob: true });
@@ -43,7 +43,7 @@ export default class BankrobHandler extends EventHandler<IBankrobEvents> {
       });
       await message.channel.send({ embed });
     } catch (error) {
-      sendReply(error, message.channel, "error");
+      sendReply(error, message.channel, 'error');
     }
   }
 
@@ -56,12 +56,12 @@ export default class BankrobHandler extends EventHandler<IBankrobEvents> {
 
       await Promise.all(promises);
       sendReply(
-        "You successfully joined the bankrob",
+        'You successfully joined the bankrob',
         message.channel,
-        "error"
+        'error'
       );
     } catch (error) {
-      sendReply(error, message.channel, "error");
+      sendReply(error, message.channel, 'error');
     }
   }
 
@@ -71,34 +71,37 @@ export default class BankrobHandler extends EventHandler<IBankrobEvents> {
   ) {
     const [{ lastBankrob }, { money }] = await Promise.all([
       new UserController(id).forceGet(),
-      new Wallet(id).forceGet("money"),
+      new Wallet(id).forceGet('money'),
     ]);
     if (options?.newBankrob && this.currentBankrobs.get(guild?.id as string)) {
-      throw new Error("There is an ongoing bankrob in your guild already");
+      throw new Error(
+        'There is an active bankrob already, write ``!heist`` to join'
+      );
     } else if (!(money >= 2000)) {
       throw new Error("You don't have enough money");
     }
-    await new Wallet(id).decrease("money", 2000);
+    await new Wallet(id).decrease('money', 2000);
 
     if (lastBankrob > Date.now() - TWELVE_HOURS_IN_MS) {
       throw new Error(
-        "You have to wait for" +
-          getRelevantTimeFromMs(Date.now() - TWELVE_HOURS_IN_MS)
+        'You have to wait for ' +
+          getRelevantTimeFromMs(Date.now() - TWELVE_HOURS_IN_MS) +
+          ' to start a new bankrob'
       );
     }
   }
 
   private async checkJoinRequirements(message: Message) {
     if (!message.guild) {
-      throw new Error("This is a guild only command");
+      throw new Error('Please use this command in a guild');
     }
 
     const bankrob = this.currentBankrobs.get(message.guild.id);
 
     if (!bankrob) {
-      throw new Error("There are no active bankrobs at the moment :(");
+      throw new Error('Create a new bankrob using ``!bankrob``');
     } else if (bankrob.robberIds.includes(message.author.id)) {
-      throw new Error("You are already participating in the active bankrob.");
+      throw new Error('You are already participating in the active bankrob.');
     }
 
     bankrob.robberIds.push(message.author.id);
@@ -120,20 +123,20 @@ export default class BankrobHandler extends EventHandler<IBankrobEvents> {
 
   private detendRobbers(robberIds: string[]): Array<Promise<void>> {
     return robberIds.map((robberId) => {
-      return new UserController(robberId).update("detentionDate", Date.now());
+      return new UserController(robberId).update('detentionDate', Date.now());
     });
   }
 
   private async handleSuccess(message: Message, { robberIds }: IBankrob) {
     const [loot] = await Promise.all([
-      new BankAccount("").robBank(robberIds),
+      new BankAccount('').robBank(robberIds),
       message.channel.startTyping(),
     ]);
 
     const embed = new MessageEmbed()
-      .setTitle("Bankrob is over")
-      .setDescription(`<@${robberIds.join(">, <@")}> have looted ${loot}€`)
-      .setColor("PURPLE");
+      .setTitle('Bankrob is over')
+      .setDescription(`<@${robberIds.join('>, <@')}> have looted ${loot}€`)
+      .setColor('PURPLE');
 
     return Promise.all([
       this.dispatchLoot(loot, robberIds),
@@ -143,13 +146,13 @@ export default class BankrobHandler extends EventHandler<IBankrobEvents> {
 
   private async handleFailure(message: Message, { robberIds }: IBankrob) {
     const embed = new MessageEmbed()
-      .setTitle("Bankrob failed")
+      .setTitle('Bankrob failed')
       .setDescription(
         `<@${robberIds.join(
-          ">, <@"
+          '>, <@'
         )}> have failed, this means they'll have to go to prison for 3 hours`
       )
-      .setColor("PURPLE");
+      .setColor('PURPLE');
 
     return Promise.all([
       this.detendRobbers(robberIds),
@@ -191,7 +194,7 @@ export default class BankrobHandler extends EventHandler<IBankrobEvents> {
   ): Array<Promise<void>> {
     return robberIds.map((robberId, index) => {
       return new BankAccount(robberId).increase(
-        "money",
+        'money',
         index === 0 ? averageLoot * 2 : averageLoot
       );
     });

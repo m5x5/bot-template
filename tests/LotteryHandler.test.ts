@@ -1,4 +1,5 @@
 import { serial as test } from 'ava';
+import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, connection } from 'mongoose';
 import Wallet from '../src/controllers/wallet';
 import Bot from '../src/core/Bot';
@@ -7,30 +8,35 @@ import TestClient from './mocks/TestClient';
 
 require('dotenv').config();
 
+const db = new MongoMemoryServer();
+const LOTTERY_CHANNEL_ID = '705040985918275584';
 const TESTER_ID = '705038391540056135';
 const thunder = new Bot();
-const tester = new TestClient();
+const tester = new TestClient(LOTTERY_CHANNEL_ID);
 let lotteryHandler: LotteryHandler | undefined;
+
 test.before(async () => {
   await Promise.all([
-    thunder.start(process.env.THUNDER_TEST_TOKEN || ''),
-    thunder.registerCommandsIn('../commands/economy', '*.ts'),
-    tester.login(process.env.TESTER_TOKEN),
-    connect(process.env.TEST_DATABASE || '', {
+    connect(await db.getConnectionString(), {
+      useCreateIndex: true,
       useNewUrlParser: true,
       useUnifiedTopology: true,
     }),
+    thunder.start(process.env.THUNDER_TEST_TOKEN || ''),
+    thunder.registerCommandsIn('../commands/economy', '*.ts'),
+    tester.login(process.env.TESTER_TOKEN),
     new Promise((resolve) => thunder.once('ready', resolve)),
+    new Promise((resolve) => tester.once('ready', resolve)),
   ]);
   lotteryHandler = thunder.handlers?.lottery;
 });
 
 test.beforeEach(async () => {
-  await new Wallet(TESTER_ID).delete();
   if (lotteryHandler) {
     lotteryHandler.playerIds = [];
     lotteryHandler.lotteryIsActive = false;
   }
+  await new Wallet(TESTER_ID).delete();
 });
 
 test('should fail to buy a ticket', async (t) => {
@@ -87,9 +93,7 @@ test('should win the lottery', async (t) => {
 });
 
 test('should buy a ticket', async (t) => {
-  if (lotteryHandler) {
-    lotteryHandler.lotteryIsActive = true;
-  }
+  await tester.getResponseTo('!startlottery');
 
   const wallet = new Wallet(TESTER_ID);
   await wallet.create({ money: 200, userId: TESTER_ID });
@@ -105,14 +109,12 @@ test('should buy a ticket', async (t) => {
     tester.waitForMessage(),
   ]);
 
-  t.is(successMsg?.embeds[0].title, 'You bought a ticket');
+  t.is(successMsg?.embeds[0]?.title, 'You bought a ticket');
   t.is((await wallet.get())?.money, 100);
 });
 
 test('should cancel the purchase of a ticket', async (t) => {
-  if (lotteryHandler) {
-    lotteryHandler.lotteryIsActive = true;
-  }
+  await tester.getResponseTo('!startlottery');
 
   const wallet = new Wallet(TESTER_ID);
   await wallet.create({ money: 200, userId: TESTER_ID });
@@ -133,13 +135,15 @@ test('should cancel the purchase of a ticket', async (t) => {
 });
 
 test('should fail to buy a ticket', async (t) => {
-  if (lotteryHandler) {
-    lotteryHandler.lotteryIsActive = true;
-  }
+  await tester.getResponseTo('!startlottery');
 
   const response = await tester.getResponseTo('!buyticket');
 
   t.is(response?.content, `<@${TESTER_ID}>, You don\'t have enough money`);
 });
 
-test.after(() => connection.close());
+test.after(async () => {
+  await connection.dropDatabase();
+  await connection.close();
+  await db.stop();
+});

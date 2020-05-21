@@ -22,7 +22,9 @@ export function sendReply(
   channel: TextChannel | DMChannel | NewsChannel | null | undefined,
   type: 'info' | 'error' | 'success' = 'info'
 ) {
-  const embed = new MessageEmbed().setColor(COLORS[type]).setTitle(message);
+  const embed = new MessageEmbed()
+    .setColor(COLORS[type])
+    .setDescription(message);
   channel?.send(embed);
 }
 

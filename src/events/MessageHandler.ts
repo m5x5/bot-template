@@ -97,7 +97,20 @@ export default class MessageHandler extends EventHandler<IMessageEvents> {
     return false;
   }
 
-  private checkIfGuildOptionsApply(_message: Message) {
+  private checkIfGuildOptionsApply(message: Message) {
+    const guildData = this.client.guildsData.find(
+      (guildData) => guildData.guildId == message.guild?.id
+    );
+    if (!guildData) {
+      throw new Error('Make sure you setup the bot on the website first');
+    }
+    if (
+      !guildData.enabledCommands.includes(
+        message.content.split('').shift() || ''
+      )
+    ) {
+      return false;
+    }
     return true;
   }
 

@@ -1,7 +1,7 @@
-import { connect } from "mongoose";
-import Bot from "./core/Bot";
+import { connect } from 'mongoose';
+import Bot from './core/Bot';
 
-require("dotenv").config();
+require('dotenv').config();
 
 const {
   TOKEN,
@@ -23,6 +23,7 @@ if(!token) {
 connect(dbURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  useCreateIndex: true,
 })
   .then(() => debug("Connected to db"))
   .catch((err: Error) => debug({ err }));
@@ -30,6 +31,6 @@ connect(dbURI, {
 const bot = new Bot({});
 
 // tslint:disable-next-line: no-floating-promises
-bot.registerCommandsIn("../commands");
+bot.registerCommandsIn('../commands');
 // tslint:disable-next-line: no-floating-promises
 bot.start(token);
