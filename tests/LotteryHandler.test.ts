@@ -22,7 +22,7 @@ test.before(async () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     }),
-    thunder.start(process.env.THUNDER_TEST_TOKEN || ''),
+    thunder.start(process.env.TEST_TOKEN || ''),
     thunder.registerCommandsIn('../commands/economy', '*.ts'),
     tester.login(process.env.TESTER_TOKEN),
     new Promise((resolve) => thunder.once('ready', resolve)),

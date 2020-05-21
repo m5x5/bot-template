@@ -5,12 +5,12 @@ require('dotenv').config();
 
 const {
   TOKEN,
-  NODE_ENV,
-  THUNDER_TEST_TOKEN,
-  TEST_DATABASE,
   DATABASE,
+  NODE_ENV,
+  TEST_TOKEN,
+  TEST_DATABASE,
 } = process.env;
-const token = NODE_ENV === "test" ? THUNDER_TEST_TOKEN: TOKEN;
+const token = NODE_ENV === "test" ? TEST_TOKEN: TOKEN;
 const dbURI = NODE_ENV === "test" ? TEST_DATABASE : DATABASE;
 const debug = require("debug")("thunder:index");
 
