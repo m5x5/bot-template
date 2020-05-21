@@ -5,13 +5,13 @@ import {
   MessageReaction,
   TextChannel,
   User,
-} from "discord.js";
-import { GuildMessage } from "../../typings";
-import Bot from "../core/Bot";
-import EventHandler, { IEvents } from "../core/EventHandler";
-import { sendReply } from "../utils";
+} from 'discord.js';
+import { GuildMessage } from '../../typings';
+import Bot from '../core/Bot';
+import EventHandler, { IEvents } from '../core/EventHandler';
+import { sendReply } from '../utils';
 
-const debug = require("debug")("thunder:ReactionHandler");
+const debug = require('debug')('thunder:ReactionHandler');
 
 export interface IReactionEvents extends IEvents {
   setup: (message: GuildMessage) => Promise<void>;
@@ -19,9 +19,9 @@ export interface IReactionEvents extends IEvents {
 
 export default class ReactionHandler extends EventHandler<IReactionEvents> {
   constructor(public client: Bot) {
-    super(client, "ReactionRole");
-    debug("Created a new instance");
-    this.registerEvent("setup", this.setup.bind(this));
+    super(client, 'ReactionRole');
+    debug('Created a new instance');
+    this.registerEvent('setup', this.setup.bind(this));
   }
   /**
    * Adds the unverified role to new user
@@ -29,20 +29,20 @@ export default class ReactionHandler extends EventHandler<IReactionEvents> {
    */
   private async setup(message: GuildMessage) {
     try {
-      debug("Started setup");
+      debug('Started setup');
       const textChannel = await this.getTextChannel(message);
       const emoji = await this.getEmoji(message);
       return this.createReactionRoleMessage(textChannel, emoji);
     } catch (e) {
-      sendReply(e.message, message.channel, "error");
+      sendReply(e.message, message.channel, 'error');
     }
   }
 
   private async getTextChannel({ channel, author }: Message) {
     const embed = new MessageEmbed()
-      .setTitle("Specify the channel name")
+      .setTitle('Specify the channel name')
       .setDescription(
-        "In which channel do you want the reaction role to be in?"
+        'In which channel do you want the reaction role to be in?'
       );
     await channel.send(embed);
     const filter = (m: Message) => m.author.id === author.id;
@@ -52,12 +52,12 @@ export default class ReactionHandler extends EventHandler<IReactionEvents> {
     });
     const collectedMessage = messageCollector.first();
     if (!collectedMessage) {
-      throw new Error("No response received in 30s, setup stopped");
+      throw new Error('No response received in 30s, setup stopped');
     }
     const reactionChannel = collectedMessage.mentions.channels.first();
 
-    if (reactionChannel?.type !== "text") {
-      throw new Error("Invalid text channel provided");
+    if (reactionChannel?.type !== 'text') {
+      throw new Error('Invalid text channel provided');
     }
 
     return reactionChannel;
@@ -65,7 +65,7 @@ export default class ReactionHandler extends EventHandler<IReactionEvents> {
 
   private async getEmoji({ channel, author }: GuildMessage) {
     const embed = new MessageEmbed().setTitle(
-      "Please react with the emoji you want to add"
+      'Please react with the emoji you want to add'
     );
 
     const message = await channel.send(embed);
@@ -76,7 +76,7 @@ export default class ReactionHandler extends EventHandler<IReactionEvents> {
     });
     const collectedEmoji = emojiCollector.first();
     if (!collectedEmoji) {
-      throw new Error("No reaction received in 30s, setup stopped");
+      throw new Error('No reaction received in 30s, setup stopped');
     }
 
     return collectedEmoji;
@@ -94,21 +94,21 @@ export default class ReactionHandler extends EventHandler<IReactionEvents> {
       (reaction) => reaction.emoji.name === emoji.name
     );
 
-    reactionCollector.on("collect", (_: MessageReaction, user: User) =>
+    reactionCollector.on('collect', (_: MessageReaction, user: User) =>
       this.addVerifiedRoleToReactor(user, message)
     );
   }
 
   private async addVerifiedRoleToReactor(user: User, message: GuildMessage) {
-    debug("Verifying user");
-    let role = message.guild.roles.cache.find((r) => r.name === "verified");
+    debug('Verifying user');
+    let role = message.guild.roles.cache.find((r) => r.name === 'verified');
     if (!role) {
       role = await message.guild.roles.create({
         data: {
-          color: "GREY",
+          color: 'GREY',
           mentionable: true,
-          name: "verified",
-          permissions: ["VIEW_CHANNEL"],
+          name: 'verified',
+          permissions: ['VIEW_CHANNEL'],
         },
       });
     }

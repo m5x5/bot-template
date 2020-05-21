@@ -2,8 +2,8 @@ import { serial as test } from 'ava';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, connection } from 'mongoose';
 import BankAccountController from '../src/controllers/bankaccount';
-import Wallet from '../src/controllers/wallet';
 import Suggestion from '../src/controllers/suggestion';
+import Wallet from '../src/controllers/wallet';
 import Bot from '../src/core/Bot';
 import TestClient from './mocks/TestClient';
 const db = new MongoMemoryServer();
@@ -38,7 +38,6 @@ test.beforeEach(async () => {
     new BankAccountController(TESTER_ID).delete(),
   ]);
 });
-
 //#endregion setup
 
 //#region !about
@@ -59,7 +58,7 @@ test('should make addmoney command succeed', async (t) => {
   const wallet = await new Wallet(TESTER_ID).get();
 
   t.is(wallet?.money, 200);
-  t.is(response?.embeds[0].title, 'Added 200 to wallet');
+  t.is(response?.embeds[0].description, 'Added 200 to wallet');
 });
 
 test('should make addmoney command fail', async (t) => {
@@ -68,7 +67,7 @@ test('should make addmoney command fail', async (t) => {
 
   t.falsy(wallet?.money);
   t.is(response?.embeds.length, 1);
-  t.is(response?.embeds[0].title, "This user doesn't exist");
+  t.is(response?.embeds[0].description, "This user doesn't exist");
 });
 
 test('should make addmoney command fail', async (t) => {
@@ -77,7 +76,7 @@ test('should make addmoney command fail', async (t) => {
 
   t.falsy(wallet?.money);
   t.is(response?.embeds.length, 1);
-  t.is(response?.embeds[0].title, 'Please provide a valid number');
+  t.is(response?.embeds[0].description, 'Please provide a valid number');
 });
 //#endregion addmoney
 
@@ -98,7 +97,7 @@ test('should make removemoney command fail', async (t) => {
 
   t.falsy(wallet?.money);
   t.is(response?.embeds.length, 1);
-  t.is(response?.embeds[0].title, "This user doesn't exist");
+  t.is(response?.embeds[0].description, "This user doesn't exist");
 });
 
 test('should make removemoney command fail', async (t) => {
@@ -107,7 +106,7 @@ test('should make removemoney command fail', async (t) => {
 
   t.falsy(wallet?.money);
   t.is(response?.embeds.length, 1);
-  t.is(response?.embeds[0].title, 'Please provide a valid number');
+  t.is(response?.embeds[0].description, 'Please provide a valid number');
 });
 //#endregion removemoney
 
@@ -170,7 +169,7 @@ test('should FAIL to deposit less than 1$', async (t) => {
   const wallet = await new Wallet(TESTER_ID).get();
 
   t.is(
-    response?.embeds[0].title,
+    response?.embeds[0].description,
     "You can't add less than 1:moneybag: to someones wallet"
   );
   t.falsy(bankaccount?.money);
@@ -201,14 +200,14 @@ test('should FAIL to give money to Thunder', async (t) => {
 
   t.is(wallet?.money, 200);
   t.is(response?.embeds.length, 1);
-  t.is(response?.embeds[0].title, "This user doesn't exist");
+  t.is(response?.embeds[0].description, "This user doesn't exist");
 });
 
 test('should FAIL to give less than 1$', async (t) => {
   const response = await tester.getResponseTo('!givemoney -1');
 
   t.is(
-    response?.embeds[0].title,
+    response?.embeds[0].description,
     "You can't add less than 1:moneybag: to someones wallet"
   );
 });
@@ -222,7 +221,7 @@ test('should FAIL to give more than he has', async (t) => {
   const thunderWallet = await new Wallet(THUNDER_ID).get();
 
   t.is(
-    response?.embeds[0].title,
+    response?.embeds[0].description,
     "That's kind, but you can't afford to give away so much money :frowning:"
   );
   t.is(wallet?.money, 200);
@@ -250,19 +249,6 @@ test("should return Testers's profile", async (t) => {
   t.is(response?.embeds[0].fields[0].value, '670$');
   t.is(response?.embeds[0].fields[1].value, '34$');
 });
-
-// test("should return Thunder's profile", async (t) => {
-//   await new Wallet(THUNDER_ID).create({ userId: THUNDER_ID, money: 6755 });
-//   await new BankAccountController(THUNDER_ID).create({
-//     money: 123,
-//     userId: THUNDER_ID,
-//   });
-
-//   const response = await tester.getResponseTo(`!profile <@${THUNDER_ID}>`);
-
-//   t.is(response?.embeds[0].fields[0].value, '6755$');
-//   t.is(response?.embeds[0].fields[1].value, '123$');
-// });
 //#endregion !profile
 
 //#region !suggest
@@ -282,7 +268,7 @@ test('this should add a new suggestion', async (t) => {
   const response = await tester.getResponseTo(`!suggest`);
 
   t.is(
-    response?.embeds[0].title,
+    response?.embeds[0].description,
     'Please provide a suggestion as second argument'
   );
 });

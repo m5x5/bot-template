@@ -1,11 +1,11 @@
-import { Message } from "discord.js";
-import { Command } from "../../core/Command";
+import { Message } from 'discord.js';
+import { Command } from '../../core/Command';
 
 export default new Command({
-  aliases: ["shuffle", "shufflemusic"],
+  aliases: ['shuffle', 'shufflemusic'],
   guildOnly: true,
-  name: "Shuffle Music Command",
+  name: 'Shuffle Music Command',
   command(message: Message) {
-    message.client.emit<any>("MusicHandler:shuffle", message);
+    message.client.emit<any>('MusicHandler:shuffle', message);
   },
 });

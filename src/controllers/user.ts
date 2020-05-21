@@ -1,10 +1,10 @@
-import Controller from "../core/Controller";
-import UserModel, { IUser, IUserDoc } from "../models/user";
-import Item from "./item";
+import Controller from '../core/Controller';
+import UserModel, { IUser, IUserDoc } from '../models/user';
+import Item from './item';
 
 export default class User extends Controller<IUserDoc, IUser> {
   static getUsers(userIds: string[]) {
-    return UserModel.find({}).where("userId").in(userIds).exec();
+    return UserModel.find({}).where('userId').in(userIds).exec();
   }
 
   constructor(public userId: string) {
@@ -24,14 +24,14 @@ export default class User extends Controller<IUserDoc, IUser> {
   async buyItem(itemAlias: string) {
     const item = await new Item(itemAlias).forceGet();
     if (item.count < 0) {
-      throw new Error("Item does not exist, or is already out of stock");
+      throw new Error('Item does not exist, or is already out of stock');
     }
 
     // REVIEW
     await Promise.all([
-      this.decrease("money", item.price),
-      new Item(itemAlias).decrease("count", 1),
-      this.pushItemToField("items", itemAlias),
+      this.decrease('money', item.price),
+      new Item(itemAlias).decrease('count', 1),
+      this.pushItemToField('items', itemAlias),
     ]);
 
     return item;

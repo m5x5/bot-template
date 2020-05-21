@@ -1,20 +1,20 @@
-import { Client, ClientOptions } from "discord.js";
-import { join } from "path";
-import GuildController from "../controllers/guild";
-import BankrobHandler from "../events/BankrobHandler";
-import LotteryHandler from "../events/LotteryHandler";
-import MemberHandler from "../events/MemberHandler";
-import MessageHandler from "../events/MessageHandler";
-import MusicHandler from "../events/MusicHandler";
-import PollHandler from "../events/PollHandler";
-import PrefixHandler from "../events/PrefixHandler";
-import ReactionHandler from "../events/ReactionRoleHandler";
-import { IGuildDoc, IGuild } from "../models/guild";
-import { readCommandsFrom } from "../utils";
-import { Command } from "./Command";
-import EventHandler, { IEvents } from "./EventHandler";
+import { Client, ClientOptions } from 'discord.js';
+import { join } from 'path';
+import GuildController from '../controllers/guild';
+import BankrobHandler from '../events/BankrobHandler';
+import LotteryHandler from '../events/LotteryHandler';
+import MemberHandler from '../events/MemberHandler';
+import MessageHandler from '../events/MessageHandler';
+import MusicHandler from '../events/MusicHandler';
+import PollHandler from '../events/PollHandler';
+import PrefixHandler from '../events/PrefixHandler';
+import ReactionHandler from '../events/ReactionRoleHandler';
+import { IGuildDoc, IGuild } from '../models/guild';
+import { readCommandsFrom } from '../utils';
+import { Command } from './Command';
+import EventHandler, { IEvents } from './EventHandler';
 
-const debug = require("debug")("thunder:bot");
+const debug = require('debug')('thunder:bot');
 
 interface IHandlers {
   lottery: LotteryHandler;
@@ -30,14 +30,14 @@ export default class Bot extends Client {
 
   constructor(options?: ClientOptions) {
     super(options);
-    debug("A new bot instance was created");
+    debug('A new bot instance was created');
     this.addHandlers();
   }
 
   async start(token: string) {
     this.guildIds = this.guilds.cache.map(({ id }) => id);
 
-    debug("Bot is logged in");
+    debug('Bot is logged in');
     debug({ guildIds: this.guildIds });
 
     this.setInterval(this.updateGuilds.bind(this), 60000);
@@ -66,6 +66,6 @@ export default class Bot extends Client {
 
   private async updateGuilds() {
     this.guildsData = await GuildController.getGuilds(this.guildIds);
-    this.emit<any>("client:guildData_updated");
+    this.emit<any>('client:guildData_updated');
   }
 }

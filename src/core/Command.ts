@@ -1,4 +1,4 @@
-import { BitFieldResolvable, Message, PermissionString } from "discord.js";
+import { BitFieldResolvable, Message, PermissionString } from 'discord.js';
 
 interface ICommandOptions {
   name: string;

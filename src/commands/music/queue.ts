@@ -1,11 +1,11 @@
-import { Message } from "discord.js";
-import { Command } from "../../core/Command";
+import { Message } from 'discord.js';
+import { Command } from '../../core/Command';
 
 export default new Command({
-  aliases: ["queue", "queuemusic"],
+  aliases: ['queue', 'queuemusic'],
   guildOnly: true,
-  name: "Queue Command",
+  name: 'Queue Command',
   command(message: Message) {
-    message.client.emit<any>("MusicHandler:queue", message);
+    message.client.emit<any>('MusicHandler:queue', message);
   },
 });

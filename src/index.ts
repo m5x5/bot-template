@@ -1,7 +1,7 @@
-import { connect } from "mongoose";
-import Bot from "./core/Bot";
+import { connect } from 'mongoose';
+import Bot from './core/Bot';
 
-require("dotenv").config();
+require('dotenv').config();
 
 const {
   TOKEN,
@@ -10,20 +10,21 @@ const {
   TEST_DATABASE,
   DATABASE,
 } = process.env;
-const token = NODE_ENV === "test" ? THUNDER_TEST_TOKEN || "" : TOKEN || "";
-const dbURI = NODE_ENV === "test" ? TEST_DATABASE : DATABASE;
-const indexDebugger = require("debug")("thunder:index");
+const token = NODE_ENV === 'test' ? THUNDER_TEST_TOKEN || '' : TOKEN || '';
+const dbURI = NODE_ENV === 'test' ? TEST_DATABASE : DATABASE;
+const indexDebugger = require('debug')('thunder:index');
 
-connect(dbURI || "mongodb://localhost/thunder-bot", {
+connect(dbURI || 'mongodb://localhost/thunder-bot', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  useCreateIndex: true,
 })
-  .then(() => indexDebugger("Connected to db"))
+  .then(() => indexDebugger('Connected to db'))
   .catch((err: Error) => indexDebugger({ err }));
 
 const bot = new Bot({});
 
 // tslint:disable-next-line: no-floating-promises
-bot.registerCommandsIn("../commands");
+bot.registerCommandsIn('../commands');
 // tslint:disable-next-line: no-floating-promises
 bot.start(token);

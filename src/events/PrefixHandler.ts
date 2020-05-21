@@ -1,6 +1,6 @@
-import GuildController from "../controllers/guild";
-import Bot from "../core/Bot";
-import EventHandler, { IEvents } from "../core/EventHandler";
+import GuildController from '../controllers/guild';
+import Bot from '../core/Bot';
+import EventHandler, { IEvents } from '../core/EventHandler';
 
 interface IPrefixEvents extends IEvents {
   change: (guildId: string, prefix: string) => Promise<void>;
@@ -9,11 +9,11 @@ interface IPrefixEvents extends IEvents {
 
 export default class PrefixHandler extends EventHandler<IPrefixEvents> {
   constructor(public client: Bot) {
-    super(client, "PrefixHandler");
-    this.registerEvent("change", this.change.bind(this));
+    super(client, 'PrefixHandler');
+    this.registerEvent('change', this.change.bind(this));
   }
   async change(guildId: string, prefix: string) {
-    await new GuildController(guildId).update("prefix", prefix);
+    await new GuildController(guildId).update('prefix', prefix);
     const guildData = this.client.guildsData.find(
       (guild) => guild.guildId === guildId
     );

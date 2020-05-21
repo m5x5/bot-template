@@ -1,11 +1,11 @@
-import { Message } from "discord.js";
-import { Command } from "../../core/Command";
+import { Message } from 'discord.js';
+import { Command } from '../../core/Command';
 
 export default new Command({
-  aliases: ["play", "playmusic"],
+  aliases: ['play', 'playmusic'],
   guildOnly: true,
-  name: "Music Command",
+  name: 'Music Command',
   command(message: Message, args) {
-    message.client.emit<any>("MusicHandler:play", message, args.join(" "));
+    message.client.emit<any>('MusicHandler:play', message, args.join(' '));
   },
 });
