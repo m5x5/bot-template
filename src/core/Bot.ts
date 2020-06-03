@@ -9,10 +9,11 @@ import MusicHandler from '../events/MusicHandler';
 import PollHandler from '../events/PollHandler';
 import PrefixHandler from '../events/PrefixHandler';
 import ReactionHandler from '../events/ReactionRoleHandler';
-import { IGuildDoc, IGuild } from '../models/guild';
+import { IGuild } from '../models/guild';
 import { readCommandsFrom } from '../utils';
 import { Command } from './Command';
 import EventHandler, { IEvents } from './EventHandler';
+import BlackJackCommand from '../events/BlackJackHandler';
 
 const debug = require('debug')('thunder:bot');
 
@@ -35,12 +36,12 @@ export default class Bot extends Client {
   }
 
   async start(token: string) {
-    this.guildIds = this.guilds.cache.map(({ id }) => id);
+    this.guildIds = ["713018075485700167"]//this.guilds.cache.map(({ id }) => id);
 
     debug('Bot is logged in');
     debug({ guildIds: this.guildIds });
 
-    this.setInterval(this.updateGuilds.bind(this), 60000);
+    this.setInterval(this.updateGuilds.bind(this), 30000);
 
     return Promise.all([this.login(token), this.updateGuilds()]);
   }
@@ -61,11 +62,13 @@ export default class Bot extends Client {
       poll: new PollHandler(this),
       prefix: new PrefixHandler(this),
       reaction: new ReactionHandler(this),
+      blackJack: new BlackJackCommand(this),
     };
   }
 
   private async updateGuilds() {
     this.guildsData = await GuildController.getGuilds(this.guildIds);
+    debug({guildsData: this.guildsData})
     this.emit<any>('client:guildData_updated');
   }
 }

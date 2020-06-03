@@ -4,7 +4,6 @@ import Bot from '../core/Bot';
 import { Command } from '../core/Command';
 import EventHandler, { IEvents } from '../core/EventHandler';
 import { sendReply } from '../utils';
-import { ONE_HOUR_IN_MS } from '../utils/constants';
 
 const debug = require('debug')('thunder:MessageHandler');
 
@@ -13,25 +12,30 @@ interface IMessageEvents extends IEvents {
 }
 
 export default class MessageHandler extends EventHandler<IMessageEvents> {
+  prefix = process.env.PREFIX || '!';
+
   constructor(client: Bot) {
     super(client, 'MessageHandler');
     client.addListener('commands:get', (callback) => {
       callback(this.client.commands);
     });
     this.registerEvent('getCommands', this.getCommands.bind(this));
-    client.on('message', this.handleMessageEvent.bind(this));
+    client.on('message', this.message.bind(this));
   }
 
-  async handleMessageEvent(message: Message) {
-    const prefix = this.getGuildPrefix(message.guild?.id) || this.prefix;
+  async message(message: Message) {
+    if (!message.content.startsWith(this.prefix)) return;
+
     const args = message.content?.trim().split(/ +/g);
     const cmd =
-      args?.shift()?.toLowerCase().trim().substring(prefix.length) ?? '';
+      args?.shift()?.toLowerCase().trim().substring(this.prefix.length) ?? '';
     const command = this.findCommand(cmd);
-    if (!command) return;
+
+    if (!command) return this.client.emit<any>('');
 
     try {
-      await this.checkIfOptionsApply(message, command);
+      this.checkCommandConfig(message, command)
+      
       if (command.options.validator) {
         await command.options.validator(message, args);
       }
@@ -48,24 +52,11 @@ export default class MessageHandler extends EventHandler<IMessageEvents> {
   }
 
   /**
-   * This function checks if the message meets all the specified options
-   * @param message The message to handle
-   * @param commandFile The mached commandFile
-   */
-  private async checkIfOptionsApply(message: Message, commandFile: Command) {
-    return (
-      this.checkIfMessageOptionsApply(message) &&
-      this.checkIfGuildOptionsApply(message) &&
-      (await this.checkIfCommandOptionsApply(message, commandFile))
-    );
-  }
-
-  /**
    * Check if the options of the single command apply
    * @param message The message to handle
    * @param command The command retrieved from the message
    */
-  private async checkIfCommandOptionsApply(
+  private checkCommandConfig(
     { guild, author }: Message,
     { options }: Command
   ) {
@@ -81,51 +72,6 @@ export default class MessageHandler extends EventHandler<IMessageEvents> {
       !messageAuthor.hasPermission(options.privelagesRequired)
     )
       throw new Error("You haven't the privilages to use this command");
-
-    if (options.group === 'economy' && (await this.isInPrison(author.id)))
-      throw new Error(
-        "You can't use the economy commands while you're in prison"
-      );
-    return true;
-  }
-
-  private async isInPrison(authorId: string) {
-    const user = await new User(authorId).get();
-
-    if (!user?.detentionDate) return false;
-    if (user.detentionDate - Date.now() < ONE_HOUR_IN_MS * 3) return true;
-    return false;
-  }
-
-  private checkIfGuildOptionsApply(message: Message) {
-    const guildData = this.client.guildsData.find(
-      (guildData) => guildData.guildId == message.guild?.id
-    );
-    if (!guildData) {
-      throw new Error('Make sure you setup the bot on the website first');
-    }
-    if (
-      !guildData.enabledCommands.includes(
-        message.content.split('').shift() || ''
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  private checkIfMessageOptionsApply(message: Message) {
-    const prefix = this.getGuildPrefix(message.guild?.id) || this.prefix;
-    return message.content.startsWith(prefix);
-  }
-
-  get prefix() {
-    return process.env.PREFIX || '!';
-  }
-  private getGuildPrefix(guildId: string | undefined) {
-    return this.client.guildsData.find(
-      (guildData) => guildData.guildId === guildId
-    )?.prefix;
   }
 
   private findCommand(cmd: string) {
