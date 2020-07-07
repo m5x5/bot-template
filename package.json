@@ -44,7 +44,7 @@
     "@types/mongoose": "^5.7.29",
     "@types/node": "^13.13.6",
     "@types/ws": "^7.2.6",
-    "@types/yt-search": "^1.1.0",
+    "@types/yt-search": "^2.0.0",
     "ava-ts": "^0.25.2",
     "mongodb-memory-server": "^6.6.0",
     "ts-node": "^8.10.2",
