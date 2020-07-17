@@ -1,4 +1,4 @@
-# Thunder
+# Bot Template
 
 Thunder is an innovative bot with tries to provide discord communities the best possible experience.
 
