@@ -1,4 +1,4 @@
-import { Document, FilterQuery, Model } from 'mongoose';
+import { Document, FilterQuery, Model, MongooseUpdateQuery } from "mongoose";
 
 export default class Controller<M extends Document, O extends unknown> {
   constructor(
@@ -14,7 +14,7 @@ export default class Controller<M extends Document, O extends unknown> {
   async forceGet(selector?: string) {
     if (selector) {
       // tslint:disable-next-line: no-console
-      console.warn('Selector is deprecated');
+      console.warn("Selector is deprecated");
     }
     const doc = await this.model.findOne(this.conditions).exec();
     return doc || this.create();
@@ -67,7 +67,9 @@ export default class Controller<M extends Document, O extends unknown> {
       await this.create();
     }
     await this.model
-      .updateOne(this.conditions, { $inc: { [field]: amount } } as any)
+      .updateOne(this.conditions, {
+        $inc: { [field]: amount },
+      } as MongooseUpdateQuery<Pick<O, keyof O>>)
       .exec();
   }
 

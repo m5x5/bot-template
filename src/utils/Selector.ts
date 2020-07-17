@@ -1,8 +1,12 @@
-import { Message } from 'discord.js';
+import { GuildMember, Message } from "discord.js";
 
 export default class Selector {
-  static userFromMessage({ mentions, guild }: Message, optional?: boolean) {
-    const target = guild?.members.resolve(mentions.users.first()?.id || '');
+  static userFromMessage(
+    message: Message,
+    optional?: boolean
+  ): GuildMember | undefined {
+    const { mentions, guild } = message;
+    const target = guild?.members.resolve(mentions.users.first()?.id || "");
 
     if (!target && !optional) {
       throw new Error("This user doesn't exist");
