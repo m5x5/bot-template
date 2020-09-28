@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/botpoint/bot#readme",
   "dependencies": {
-    "ava": "^3.10.1",
+    "ava": "^3.13.0",
     "debug": "^4.1.1",
     "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
