@@ -39,7 +39,7 @@
     "@types/ws": "^7.2.6",
     "@typescript-eslint/eslint-plugin": "^3.6.0",
     "@typescript-eslint/parser": "^3.6.1",
-    "eslint": "^7.4.0",
+    "eslint": "^7.14.0",
     "mongodb-memory-server": "^6.6.0",
     "typescript": "^3.9.6"
   }
